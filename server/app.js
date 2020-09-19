@@ -33,6 +33,7 @@ server.get('/getAll', (request, response) =>{
 
 //update
 server.patch('/update/:id', (request, response) => {
+    console.log(request.body);
     const {id, name} = request.body;
     const db = dbService.getDbServiceInstance();
 
@@ -47,17 +48,18 @@ server.patch('/update/:id', (request, response) => {
 //delete
 
 server.delete('/delete/:id', (request, response) => {
-    console.log(request.params.id);
+    const id  = request.params.id;
+    console.log(id);
     const db = dbService.getDbServiceInstance();
-    const result = db.deleteRowById(request.params.id);
+    const result = db.deleteRowById(id);
     result
     .then(data => response.json({success : data}))
     .catch(err => console.log(err));
 });
 
 //search
-server.get('/search/:name', (request, response) => (request,response) => {
-    const {name} = request.params;
+server.get('/search/:name', (request, response) => {
+    const name = request.params.name;
     const db = dbService.getDbServiceInstance();
     const result = db.searchByName(name);
 

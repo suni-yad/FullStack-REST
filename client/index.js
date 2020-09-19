@@ -1,14 +1,17 @@
+/* event handler to fetch all data from database on page load 
+or if there is no data in database the "no data" will be displayed*/
 document.addEventListener('DOMContentLoaded', function(){
     
-    fetch('http://localhost:5500/getAll')
+    fetch('http://localhost:5500/getAll')     // read API fetch call
     .then(response => response.json())
     .then(data => loadHTMLTable(data['data']));
     
 });
-
+// event handler to update and delete 
 document.querySelector('table tbody').addEventListener('click',function(event){
     
     if(event.target.className === "delete-row-btn"){
+        //console.log(event.target);}
         deleteRowById(event.target.dataset.id);
     }
     if(event.target.className === "edit-row-btn"){
@@ -19,6 +22,7 @@ document.querySelector('table tbody').addEventListener('click',function(event){
 const updateBtn = document.querySelector('#update-row-btn');
 const searchBtn = document.querySelector('#search-btn');
 
+/* onclick event to search data into table in database */
 searchBtn.onclick = function(){
 
     const searchValue = document.querySelector('#search-input').value;
@@ -34,7 +38,7 @@ function deleteRowById(id){
         headers: { 
             'Content-type' : 'application/json'
         },
-        method: 'DELETE',
+        method: 'DELETE'
     })
     .then(response => response.json())
     .then(data => {
@@ -48,17 +52,18 @@ function deleteRowById(id){
      updateSection.hidden = false;
      document.querySelector('#update-row-btn').dataset.id = id;
  }
-
+/* onclick event to partially update data into table in database */
  updateBtn.onclick = function(){
     const updateNameInput = document.querySelector('#update-name-input');
+    const updateId= document.querySelector('#update-row-btn').dataset.id;
     
-    fetch('http://localhost:5500/update/'+updateNameInput.dataset.id,{
+    fetch('http://localhost:5500/update/'+updateId,{
         method: 'PATCH',
         headers: { 
             'Content-type' : 'application/json'
         },
         body: JSON.stringify({
-            id: updateNameInput.dataset.id,
+            id: updateId,
             name: updateNameInput.value
         })
     })
@@ -67,9 +72,10 @@ function deleteRowById(id){
         if(data.success){
             location.reload();
         }
-    })
+    });
  }
 
+ /* onclick event to add new data into table in database */
 const addBtn = document.querySelector('#add-name-btn');
 
 addBtn.onclick = function(){
@@ -78,7 +84,7 @@ addBtn.onclick = function(){
     const name = nameInput.value;
     nameInput.value = "";
 
-    fetch('http://localhost:5500/insert', {
+    fetch('http://localhost:5500/insert', {  //  API fetch call
         headers: {
             'Content-type': 'application/json'
         },
@@ -89,10 +95,9 @@ addBtn.onclick = function(){
     .then(data => insertRowIntoTable(data['data']));
 }
  
-
     function insertRowIntoTable(data){
         const table = document.querySelector('table tbody');
-        const isTableData = table.querySelector('.no-data');
+        const isTableData = table.querySelector('.no-data'); 
     
         let tableHtml = "<tr>";
     
@@ -117,14 +122,15 @@ addBtn.onclick = function(){
             newRow.innerHTML = tableHtml;
          }
     
-        }
+    }
 function loadHTMLTable(data) {
     const table = document.querySelector('table tbody');
-
+//executes if table has no data
     if(data.length === 0) {
         table.innerHTML = "<tr><td class='no-data' colspan='5'>No Data</td></tr>";
         return;
     }
+    // executes if table has some data
     let tableHtml = "";
     data.forEach(function({id,name,date_added}){
         tableHtml += "<tr>";
