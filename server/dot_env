@@ -1,0 +1,7 @@
+PORT = 5500
+USER= root
+HOST= localhost
+PASSWORD= @root1234
+DATABASE= starter-app-data
+DB_PORT=3306
+
